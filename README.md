@@ -1,37 +1,80 @@
-# okx-sdk-v5
+# OKX Java SDK
 
-#### 介绍
-官方只有python版本的，造个java版补充下
+这是一个用于访问OKX V5 API的Java SDK，提供了简单易用的接口来与OKX交易所进行交互。
 
-#### 软件架构
-软件架构说明
+## 功能特点
 
+- 支持OKX V5 API的所有主要功能
+- 使用简单，接口清晰
+- 完整的Java文档注释
+- 包含示例代码
 
-#### 安装教程
+## 快速开始
 
-1.  xxxx
-2.  xxxx
-3.  xxxx
+### 添加依赖
 
-#### 使用说明
+将以下依赖添加到您的`pom.xml`文件中：
 
-1.  xxxx
-2.  xxxx
-3.  xxxx
+```xml
+<dependency>
+    <groupId>com.okx</groupId>
+    <artifactId>okx-sdk</artifactId>
+    <version>1.0.0</version>
+</dependency>
+```
 
-#### 参与贡献
+### 基本用法
 
-1.  Fork 本仓库
-2.  新建 Feat_xxx 分支
-3.  提交代码
-4.  新建 Pull Request
+以下是一个简单的示例，展示如何使用SDK获取市场数据：
 
+```java
+// 创建市场数据服务实例
+String apiKey = "YOUR-API-KEY";
+String secretKey = "YOUR-SECRET-KEY";
+String passphrase = "YOUR-PASSPHRASE";
 
-#### 特技
+MarketDataService marketDataService = new MarketDataServiceImpl(apiKey, secretKey, passphrase, OkxConfig.BASE_URL);
 
-1.  使用 Readme\_XXX.md 来支持不同的语言，例如 Readme\_en.md, Readme\_zh.md
-2.  Gitee 官方博客 [blog.gitee.com](https://blog.gitee.com)
-3.  你可以 [https://gitee.com/explore](https://gitee.com/explore) 这个地址来了解 Gitee 上的优秀开源项目
-4.  [GVP](https://gitee.com/gvp) 全称是 Gitee 最有价值开源项目，是综合评定出的优秀开源项目
-5.  Gitee 官方提供的使用手册 [https://gitee.com/help](https://gitee.com/help)
-6.  Gitee 封面人物是一档用来展示 Gitee 会员风采的栏目 [https://gitee.com/gitee-stars/](https://gitee.com/gitee-stars/)
+// 获取BTC-USDT的行情信息
+OkxResponse<List<Ticker>> response = marketDataService.getTicker("BTC-USDT");
+if (response.isSuccessful()) {
+    Ticker ticker = response.getData().get(0);
+    System.out.println("BTC-USDT 最新价格: " + ticker.getLast());
+}
+```
+
+## 功能模块
+
+### 市场数据
+- 获取单个产品行情信息
+- 获取所有产品行情信息
+- 获取K线数据
+- 获取深度数据
+
+### 待实现功能
+- 交易功能
+- 账户功能
+- 资金功能
+- 其他高级功能
+
+## 注意事项
+
+1. 在使用SDK之前，请确保您已经在OKX平台注册并获取了API密钥。
+2. 请妥善保管您的API密钥和密码，不要泄露给他人。
+3. 建议在正式环境使用之前，先在测试环境中进行测试。
+
+## 贡献
+
+欢迎提交问题和改进建议！如果您想贡献代码，请：
+
+1. Fork 本仓库
+2. 创建您的特性分支 (`git checkout -b feature/AmazingFeature`)
+3. 提交您的改动 (`git commit -m 'Add some AmazingFeature'`)
+4. 推送到分支 (`git push origin feature/AmazingFeature`)
+5. 开启一个Pull Request
+
+## 许可证
+
+本项目采用 MIT 许可证 - 详见 [LICENSE](LICENSE) 文件 
+
+## 该SDK所有代码均来自Cursor编写，这玩意是真强！！！
