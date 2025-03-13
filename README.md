@@ -76,5 +76,3 @@ if (response.isSuccessful()) {
 ## 许可证
 
 本项目采用 MIT 许可证 - 详见 [LICENSE](LICENSE) 文件 
-
-## 该SDK所有代码均来自Cursor编写，这玩意是真强！！！
