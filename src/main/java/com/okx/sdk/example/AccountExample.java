@@ -17,24 +17,22 @@ import java.util.List;
 public class AccountExample {
     public static void main(String[] args) {
         // 替换为您的API密钥信息
-        String apiKey = "YOUR-API-KEY";
-        String secretKey = "YOUR-SECRET-KEY";
-        String passphrase = "YOUR-PASSPHRASE";
+        String apiKey = "";
+        String secretKey = "";
+        String passphrase = "";
 
         // 创建账户服务实例
         AccountService accountService = new AccountServiceImpl(apiKey, secretKey, passphrase, OkxConfig.BASE_URL);
-
         try {
             // 查询账户余额
-            OkxResponse<Account> balanceResponse = accountService.getBalance(null);
+            OkxResponse<Account> balanceResponse = accountService.getBalance("");
             if (balanceResponse.isSuccessful()) {
                 Account account = balanceResponse.getData();
                 if (account != null && account.getDetails() != null) {
-                    System.out.println("账户总权益: " + account.getTotalEq() + " USD");
+                    System.out.println("账户总权益: " + account.getTotalEq() + " USTD");
                     System.out.println("\n币种余额信息:");
                     for (Account.Balance balance : account.getDetails()) {
-                        System.out.printf("币种: %s, 可用余额: %s, 冻结余额: %s%n",
-                                balance.getCcy(), balance.getAvailBal(), balance.getFrozenBal());
+                        System.out.printf("币种: %s, 可用余额: %s, 冻结余额: %s%n",balance.getCcy(), balance.getAvailBal(), balance.getFrozenBal());
                     }
                 }
             }
@@ -170,4 +168,4 @@ public class AccountExample {
             e.printStackTrace();
         }
     }
-} 
+}

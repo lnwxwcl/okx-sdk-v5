@@ -14,9 +14,9 @@ import java.util.List;
 public class SubAccountExample {
     public static void main(String[] args) {
         // 替换为您的API密钥信息
-        String apiKey = "xx";
-        String secretKey = "xx";
-        String passphrase = "xx";
+        String apiKey = "";
+        String secretKey = "";
+        String passphrase = "";
 
         // 创建子账户服务实例
         SubAccountService subAccountService = new SubAccountServiceImpl(apiKey, secretKey, passphrase, OkxConfig.BASE_URL);
@@ -31,7 +31,7 @@ public class SubAccountExample {
                     System.out.println("子账户列表:");
                     for (SubAccount subAccount : subAccounts) {
                         System.out.printf("账户名: %s, 类型: %s, 备注: %s, 创建时间: %s%n",
-                                subAccount.getSubAcct(), subAccount.getType(), 
+                                subAccount.getSubAcct(), subAccount.getType(),
                                 subAccount.getLabel(), subAccount.getTs());
                     }
                 } else {
@@ -42,13 +42,13 @@ public class SubAccountExample {
             }
 
             // 如果有子账户，查询第一个子账户的余额
-            if (subAccountsResponse.isSuccessful() && subAccountsResponse.getData() != null 
+            if (subAccountsResponse.isSuccessful() && subAccountsResponse.getData() != null
                     && !subAccountsResponse.getData().isEmpty()) {
                 String subAcct = subAccountsResponse.getData().get(0).getSubAcct();
-                
+
                 // 查询子账户交易账户余额
                 System.out.println("\n查询子账户交易账户余额...");
-                OkxResponse<List<SubAccountBalance>> balanceResponse = 
+                OkxResponse<List<SubAccountBalance>> balanceResponse =
                         subAccountService.getSubAccountBalance(subAcct, null);
                 if (balanceResponse.isSuccessful()) {
                     List<SubAccountBalance> balances = balanceResponse.getData();
@@ -62,10 +62,10 @@ public class SubAccountExample {
                 } else {
                     System.out.println("查询子账户交易账户余额失败: " + balanceResponse.getMsg());
                 }
-                
+
                 // 查询子账户资金账户余额
                 System.out.println("\n查询子账户资金账户余额...");
-                OkxResponse<List<SubAccountBalance>> fundingResponse = 
+                OkxResponse<List<SubAccountBalance>> fundingResponse =
                         subAccountService.getFundingBalance(subAcct);
                 if (fundingResponse.isSuccessful()) {
                     List<SubAccountBalance> balances = fundingResponse.getData();
@@ -81,26 +81,26 @@ public class SubAccountExample {
                 }
 
                 // 子账户间转账示例
-//                System.out.println("\n执行子账户间转账...");
-//                SubAccountTransfer transfer = SubAccountTransfer.builder()
-//                        .ccy("USDT")
-//                        .amt("1")
-//                        .from(subAcct)
-//                        .to("目标子账户名称")  // 替换为实际的目标子账户名称
-//                        .fromType("6")  // 6: 资金账户
-//                        .toType("6")    // 6: 资金账户
-//                        .build();
-//
-//                try {
-//                    OkxResponse<String> transferResponse = subAccountService.subAccountTransfer(transfer);
-//                    if (transferResponse.isSuccessful()) {
-//                        System.out.println("转账成功，转账ID: " + transferResponse.getData());
-//                    } else {
-//                        System.out.println("转账失败: " + transferResponse.getMsg());
-//                    }
-//                } catch (Exception e) {
-//                    System.out.println("转账发生错误: " + e.getMessage());
-//                }
+                System.out.println("\n执行子账户间转账...");
+                SubAccountTransfer transfer = SubAccountTransfer.builder()
+                        .ccy("USDT")
+                        .amt("1")
+                        .from("18")
+                        .to("18")
+                        .fromSubAccount("85687550118862848")
+                        .toSubAccount("ClingSub2")
+                        .build();
+
+                try {
+                    OkxResponse<String> transferResponse = subAccountService.subAccountTransfer(transfer);
+                    if (transferResponse.isSuccessful()) {
+                        System.out.println("转账成功，转账ID: " + transferResponse.getData());
+                    } else {
+                        System.out.println("转账失败: " + transferResponse.getMsg());
+                    }
+                } catch (Exception e) {
+                    System.out.println("转账发生错误: " + e.getMessage());
+                }
 //
 //                // 设置子账户主动转出权限
 //                System.out.println("\n设置子账户主动转出权限...");

@@ -60,11 +60,8 @@ public class OkxRestClient {
         String timestamp = SignatureUtils.getTimestamp();
         String jsonBody = body == null ? "" : JSON.toJSONString(body);
         String signature = SignatureUtils.sign(timestamp, "POST", path, jsonBody, secretKey);
-
-        RequestBody requestBody = RequestBody.create(
-                jsonBody,
-                MediaType.parse(OkxConfig.CONTENT_TYPE)
-        );
+        MediaType mediaType = MediaType.parse(OkxConfig.CONTENT_TYPE);
+        RequestBody requestBody = RequestBody.create(jsonBody, mediaType);
 
         Request request = new Request.Builder()
                 .url(baseUrl + path)
@@ -88,4 +85,4 @@ public class OkxRestClient {
             return body;
         }
     }
-} 
+}

@@ -99,4 +99,4 @@ public interface TradeService {
      */
     OkxResponse<List<Order>> getOrderHistory(String instType, String instId, String ordType, String state,
                                           String after, String before, Integer limit) throws IOException;
-} 
+}

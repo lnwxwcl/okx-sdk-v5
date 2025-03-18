@@ -11,9 +11,9 @@ import com.okx.sdk.websocket.OkxWebSocketListener;
 public class WebSocketExample {
     public static void main(String[] args) {
         // 替换为您的API密钥信息
-        String apiKey = "YOUR-API-KEY";
-        String secretKey = "YOUR-SECRET-KEY";
-        String passphrase = "YOUR-PASSPHRASE";
+        String apiKey = "";
+        String secretKey = "";
+        String passphrase = "";
 
         // 创建公共频道WebSocket客户端
         OkxWebSocketListener publicListener = new OkxWebSocketListener() {

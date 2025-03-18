@@ -9,12 +9,15 @@ import com.okx.sdk.common.OkxResponse;
 import com.okx.sdk.model.market.Ticker;
 import com.okx.sdk.model.market.Candlestick;
 import com.okx.sdk.model.market.OrderBook;
+import com.okx.sdk.model.market.ExchangeRate;
+import com.okx.sdk.model.market.Instrument;
 import com.okx.sdk.service.market.MarketDataService;
 import org.apache.commons.lang3.StringUtils;
 
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 /**
  * 市场数据服务实现类
@@ -145,5 +148,185 @@ public class MarketDataServiceImpl extends OkxRestClient implements MarketDataSe
         }
         
         return result;
+    }
+
+    @Override
+    public OkxResponse<ExchangeRate> getExchangeRate() throws IOException {
+        String response = get("/api/v5/market/exchange-rate", null);
+        JSONObject jsonObject = JSON.parseObject(response);
+        
+        OkxResponse<ExchangeRate> result = new OkxResponse<>();
+        result.setCode(jsonObject.getString("code"));
+        result.setMsg(jsonObject.getString("msg"));
+        
+        JSONArray dataArray = jsonObject.getJSONArray("data");
+        if (dataArray != null && !dataArray.isEmpty()) {
+            result.setData(dataArray.getObject(0, ExchangeRate.class));
+        }
+        
+        return result;
+    }
+
+    @Override
+    public OkxResponse<List<Instrument>> getInstruments(String instType, String uly, String instId) throws IOException {
+        List<String> params = new ArrayList<>();
+        if (StringUtils.isNotEmpty(instType)) {
+            params.add("instType=" + instType);
+        }
+        if (StringUtils.isNotEmpty(uly)) {
+            params.add("uly=" + uly);
+        }
+        if (StringUtils.isNotEmpty(instId)) {
+            params.add("instId=" + instId);
+        }
+
+        String queryString = String.join("&", params);
+        String response = get("/api/v5/public/instruments", queryString);
+        return JSON.parseObject(response, new TypeReference<OkxResponse<List<Instrument>>>() {});
+    }
+
+    @Override
+    public OkxResponse<List<Map<String, String>>> getDeliveryExerciseHistory(String instType, String uly,
+                                                                          String after, String before,
+                                                                          Integer limit) throws IOException {
+        List<String> params = new ArrayList<>();
+        if (StringUtils.isNotEmpty(instType)) {
+            params.add("instType=" + instType);
+        }
+        if (StringUtils.isNotEmpty(uly)) {
+            params.add("uly=" + uly);
+        }
+        if (StringUtils.isNotEmpty(after)) {
+            params.add("after=" + after);
+        }
+        if (StringUtils.isNotEmpty(before)) {
+            params.add("before=" + before);
+        }
+        if (limit != null) {
+            params.add("limit=" + limit);
+        }
+
+        String queryString = String.join("&", params);
+        String response = get("/api/v5/public/delivery-exercise-history", queryString);
+        return JSON.parseObject(response, new TypeReference<OkxResponse<List<Map<String, String>>>>() {});
+    }
+
+    @Override
+    public OkxResponse<List<Map<String, String>>> getOpenInterest(String instType, String uly,
+                                                              String instId) throws IOException {
+        List<String> params = new ArrayList<>();
+        if (StringUtils.isNotEmpty(instType)) {
+            params.add("instType=" + instType);
+        }
+        if (StringUtils.isNotEmpty(uly)) {
+            params.add("uly=" + uly);
+        }
+        if (StringUtils.isNotEmpty(instId)) {
+            params.add("instId=" + instId);
+        }
+
+        String queryString = String.join("&", params);
+        String response = get("/api/v5/public/open-interest", queryString);
+        return JSON.parseObject(response, new TypeReference<OkxResponse<List<Map<String, String>>>>() {});
+    }
+
+    @Override
+    public OkxResponse<Map<String, String>> getFundingRate(String instId) throws IOException {
+        String queryString = "instId=" + instId;
+        String response = get("/api/v5/public/funding-rate", queryString);
+        return JSON.parseObject(response, new TypeReference<OkxResponse<Map<String, String>>>() {});
+    }
+
+    @Override
+    public OkxResponse<List<Map<String, String>>> getFundingRateHistory(String instId, String after,
+                                                                    String before, Integer limit) throws IOException {
+        List<String> params = new ArrayList<>();
+        params.add("instId=" + instId);
+        if (StringUtils.isNotEmpty(after)) {
+            params.add("after=" + after);
+        }
+        if (StringUtils.isNotEmpty(before)) {
+            params.add("before=" + before);
+        }
+        if (limit != null) {
+            params.add("limit=" + limit);
+        }
+
+        String queryString = String.join("&", params);
+        String response = get("/api/v5/public/funding-rate-history", queryString);
+        return JSON.parseObject(response, new TypeReference<OkxResponse<List<Map<String, String>>>>() {});
+    }
+
+    @Override
+    public OkxResponse<Map<String, String>> getPriceLimit(String instType, String instId,
+                                                      String tdMode) throws IOException {
+        List<String> params = new ArrayList<>();
+        if (StringUtils.isNotEmpty(instType)) {
+            params.add("instType=" + instType);
+        }
+        if (StringUtils.isNotEmpty(instId)) {
+            params.add("instId=" + instId);
+        }
+        if (StringUtils.isNotEmpty(tdMode)) {
+            params.add("tdMode=" + tdMode);
+        }
+
+        String queryString = String.join("&", params);
+        String response = get("/api/v5/public/price-limit", queryString);
+        return JSON.parseObject(response, new TypeReference<OkxResponse<Map<String, String>>>() {});
+    }
+
+    @Override
+    public OkxResponse<Map<String, String>> getOptionMarketData(String instId) throws IOException {
+        String queryString = "instId=" + instId;
+        String response = get("/api/v5/public/opt-summary", queryString);
+        return JSON.parseObject(response, new TypeReference<OkxResponse<Map<String, String>>>() {});
+    }
+
+    @Override
+    public OkxResponse<Map<String, String>> getEstimatedPrice(String instId) throws IOException {
+        String queryString = "instId=" + instId;
+        String response = get("/api/v5/public/estimated-price", queryString);
+        return JSON.parseObject(response, new TypeReference<OkxResponse<Map<String, String>>>() {});
+    }
+
+    @Override
+    public OkxResponse<List<Map<String, String>>> getIndexTickers(String quoteCcy,
+                                                              String instId) throws IOException {
+        List<String> params = new ArrayList<>();
+        if (StringUtils.isNotEmpty(quoteCcy)) {
+            params.add("quoteCcy=" + quoteCcy);
+        }
+        if (StringUtils.isNotEmpty(instId)) {
+            params.add("instId=" + instId);
+        }
+
+        String queryString = String.join("&", params);
+        String response = get("/api/v5/market/index-tickers", queryString);
+        return JSON.parseObject(response, new TypeReference<OkxResponse<List<Map<String, String>>>>() {});
+    }
+
+    @Override
+    public OkxResponse<List<Map<String, String>>> getIndexCandles(String instId, String after,
+                                                              String before, String bar,
+                                                              Integer limit) throws IOException {
+        List<String> params = new ArrayList<>();
+        params.add("instId=" + instId);
+        if (StringUtils.isNotEmpty(after)) {
+            params.add("after=" + after);
+        }
+        if (StringUtils.isNotEmpty(before)) {
+            params.add("before=" + before);
+        }
+        if (StringUtils.isNotEmpty(bar)) {
+            params.add("bar=" + bar);
+        }
+        if (limit != null) {
+            params.add("limit=" + limit);
+        }
+
+        String queryString = String.join("&", params);
+        String response = get("/api/v5/market/index-candles", queryString);
+        return JSON.parseObject(response, new TypeReference<OkxResponse<List<Map<String, String>>>>() {});
     }
 } 

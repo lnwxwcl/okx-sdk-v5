@@ -20,26 +20,26 @@ public class SubAccountTransfer {
     private String amt;
     
     /**
-     * 转出子账户名称
+     * 转出子账户类型
+     * 6：资金账户
+     * 18：交易账户
      */
     private String from;
     
     /**
-     * 转入子账户名称
+     * 转入子账户类型
+     * 6：资金账户
+     * 18：交易账户
      */
     private String to;
     
     /**
-     * 转出账户类型
-     * 6：资金账户
-     * 18：交易账户
+     * 转出账户的账户名称
      */
-    private String fromType;
+    private String fromSubAccount;
     
     /**
-     * 转入账户类型
-     * 6：资金账户
-     * 18：交易账户
+     * 转入账户的账户名称
      */
-    private String toType;
+    private String toSubAccount;
 } 

@@ -64,7 +64,7 @@ public class SubAccountServiceImpl extends OkxRestClient implements SubAccountSe
 
     @Override
     public OkxResponse<String> subAccountTransfer(SubAccountTransfer transfer) throws IOException {
-        String response = post("/api/v5/account/subaccount/transfer", transfer);
+        String response = post("/api/v5/asset/subaccount/transfer", transfer);
         JSONObject jsonObject = JSON.parseObject(response);
         
         OkxResponse<String> result = new OkxResponse<>();
