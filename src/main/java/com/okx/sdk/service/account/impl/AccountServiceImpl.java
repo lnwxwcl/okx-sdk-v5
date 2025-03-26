@@ -6,9 +6,7 @@ import com.alibaba.fastjson2.JSONObject;
 import com.alibaba.fastjson2.JSONArray;
 import com.okx.sdk.client.OkxRestClient;
 import com.okx.sdk.common.OkxResponse;
-import com.okx.sdk.model.account.Account;
-import com.okx.sdk.model.account.Bill;
-import com.okx.sdk.model.account.Position;
+import com.okx.sdk.model.account.*;
 import com.okx.sdk.service.account.AccountService;
 import org.apache.commons.lang3.StringUtils;
 
@@ -35,16 +33,16 @@ public class AccountServiceImpl extends OkxRestClient implements AccountService 
         }
         String response = get(path, null);
         JSONObject jsonObject = JSON.parseObject(response);
-        
+
         OkxResponse<Account> result = new OkxResponse<>();
         result.setCode(jsonObject.getString("code"));
         result.setMsg(jsonObject.getString("msg"));
-        
+
         JSONArray dataArray = jsonObject.getJSONArray("data");
         if (dataArray != null && !dataArray.isEmpty()) {
             result.setData(dataArray.getObject(0, Account.class));
         }
-        
+
         return result;
     }
 
@@ -64,24 +62,24 @@ public class AccountServiceImpl extends OkxRestClient implements AccountService 
         String queryString = String.join("&", params);
         String response = get("/api/v5/account/positions", queryString);
         JSONObject jsonObject = JSON.parseObject(response);
-        
+
         OkxResponse<List<Position>> result = new OkxResponse<>();
         result.setCode(jsonObject.getString("code"));
         result.setMsg(jsonObject.getString("msg"));
-        
+
         JSONArray dataArray = jsonObject.getJSONArray("data");
         if (dataArray != null) {
             result.setData(dataArray.toList(Position.class));
         } else {
             result.setData(new ArrayList<>());
         }
-        
+
         return result;
     }
 
     @Override
     public OkxResponse<List<Bill>> getBills(String instType, String ccy, String mgnMode, String ctType,
-                                         String type, String subType, String after, String before, Integer limit) throws IOException {
+                                            String type, String subType, String after, String before, Integer limit) throws IOException {
         List<String> params = new ArrayList<>();
         if (StringUtils.isNotEmpty(instType)) {
             params.add("instType=" + instType);
@@ -114,18 +112,18 @@ public class AccountServiceImpl extends OkxRestClient implements AccountService 
         String queryString = String.join("&", params);
         String response = get("/api/v5/account/bills", queryString);
         JSONObject jsonObject = JSON.parseObject(response);
-        
+
         OkxResponse<List<Bill>> result = new OkxResponse<>();
         result.setCode(jsonObject.getString("code"));
         result.setMsg(jsonObject.getString("msg"));
-        
+
         JSONArray dataArray = jsonObject.getJSONArray("data");
         if (dataArray != null) {
             result.setData(dataArray.toList(Bill.class));
         } else {
             result.setData(new ArrayList<>());
         }
-        
+
         return result;
     }
 
@@ -143,7 +141,7 @@ public class AccountServiceImpl extends OkxRestClient implements AccountService 
 
         String response = post("/api/v5/account/set-leverage", params);
         JSONObject jsonObject = JSON.parseObject(response);
-        
+
         OkxResponse<Void> result = new OkxResponse<>();
         result.setCode(jsonObject.getString("code"));
         result.setMsg(jsonObject.getString("msg"));
@@ -168,17 +166,17 @@ public class AccountServiceImpl extends OkxRestClient implements AccountService 
         String queryString = String.join("&", params);
         String response = get("/api/v5/account/max-size", queryString);
         JSONObject jsonObject = JSON.parseObject(response);
-        
+
         OkxResponse<String> result = new OkxResponse<>();
         result.setCode(jsonObject.getString("code"));
         result.setMsg(jsonObject.getString("msg"));
-        
+
         JSONArray dataArray = jsonObject.getJSONArray("data");
         if (dataArray != null && !dataArray.isEmpty()) {
             JSONObject dataObject = dataArray.getJSONObject(0);
             result.setData(dataObject.getString("maxSz"));
         }
-        
+
         return result;
     }
 
@@ -200,17 +198,17 @@ public class AccountServiceImpl extends OkxRestClient implements AccountService 
         String queryString = String.join("&", params);
         String response = get("/api/v5/account/max-avail-size", queryString);
         JSONObject jsonObject = JSON.parseObject(response);
-        
+
         OkxResponse<String> result = new OkxResponse<>();
         result.setCode(jsonObject.getString("code"));
         result.setMsg(jsonObject.getString("msg"));
-        
+
         JSONArray dataArray = jsonObject.getJSONArray("data");
         if (dataArray != null && !dataArray.isEmpty()) {
             JSONObject dataObject = dataArray.getJSONObject(0);
             result.setData(dataObject.getString("availSz"));
         }
-        
+
         return result;
     }
 
@@ -227,10 +225,58 @@ public class AccountServiceImpl extends OkxRestClient implements AccountService 
 
         String response = post("/api/v5/account/position/margin-balance", params);
         JSONObject jsonObject = JSON.parseObject(response);
-        
+
         OkxResponse<Void> result = new OkxResponse<>();
         result.setCode(jsonObject.getString("code"));
         result.setMsg(jsonObject.getString("msg"));
+        return result;
+    }
+
+    @Override
+    public OkxResponse<String> fundsTransfer(FundsTransfer transfer) throws IOException {
+        String response = post("/api/v5/asset/transfer", transfer);
+        JSONObject jsonObject = JSON.parseObject(response);
+        OkxResponse<String> result = new OkxResponse<>();
+        result.setCode(jsonObject.getString("code"));
+        result.setMsg(jsonObject.getString("msg"));
+
+        if (jsonObject.getJSONArray("data") != null && !jsonObject.getJSONArray("data").isEmpty()) {
+            result.setData(jsonObject.getJSONArray("data").getJSONObject(0).getString("transId"));
+        }
+
+        return result;
+    }
+
+    @Override
+    public OkxResponse<TransferState> getTransferState(String transId, String clientId, String type) throws IOException {
+        List<String> params = new ArrayList<>();
+        if (StringUtils.isNotEmpty(transId)) {
+            params.add("transId=" + transId);
+        }
+        if (StringUtils.isNotEmpty(clientId)) {
+            params.add("clientId=" + clientId);
+        }
+        if (StringUtils.isNotEmpty(type)) {
+            params.add("type=" + type);
+        } else {
+            params.add("type=0");
+        }
+
+        String queryString = String.join("&", params);
+        String response = get("/api/v5/asset/transfer-state", queryString);
+
+        // 手动解析JSON响应
+        JSONObject jsonObject = JSON.parseObject(response);
+        OkxResponse<TransferState> result = new OkxResponse<>();
+        result.setCode(jsonObject.getString("code"));
+        result.setMsg(jsonObject.getString("msg"));
+
+        JSONArray dataArray = jsonObject.getJSONArray("data");
+        if (dataArray != null && !dataArray.isEmpty()) {
+            // 获取第一个元素并转换为TransferState对象
+            result.setData(dataArray.getObject(0, TransferState.class));
+        }
+
         return result;
     }
 } 

@@ -18,9 +18,9 @@ import java.util.List;
 public class TradeExample {
     public static void main(String[] args) {
         // 替换为您的API密钥信息
-        String apiKey = "YOUR-API-KEY";
-        String secretKey = "YOUR-SECRET-KEY";
-        String passphrase = "YOUR-PASSPHRASE";
+        String apiKey = "";
+        String secretKey = "";
+        String passphrase = "";
 
         // 创建交易服务实例
         TradeService tradeService = new TradeServiceImpl(apiKey, secretKey, passphrase, OkxConfig.BASE_URL);
@@ -31,10 +31,10 @@ public class TradeExample {
             // 先查询ETH余额
             System.out.println("查询ETH余额...");
             OkxResponse<Account> balanceResponse = accountService.getBalance("ETH");
-            
-            if (!balanceResponse.isSuccessful() || balanceResponse.getData() == null || 
-                balanceResponse.getData().getDetails() == null || 
-                balanceResponse.getData().getDetails().isEmpty()) {
+
+            if (!balanceResponse.isSuccessful() || balanceResponse.getData() == null ||
+                    balanceResponse.getData().getDetails() == null ||
+                    balanceResponse.getData().getDetails().isEmpty()) {
                 System.out.println("获取ETH余额失败");
                 return;
             }
@@ -49,36 +49,32 @@ public class TradeExample {
 
             // 市价卖出全部ETH
             PlaceOrderRequest sellRequest = PlaceOrderRequest.builder()
-                    .instId("ETH-USDT")
+                    .instId("ORDI-USDT")
                     .tdMode("cash")
                     .side("sell")
                     .ordType("market")
                     .sz(availableEth)  // 卖出所有可用的ETH
                     .build();
-
-            System.out.println("正在下市价卖出订单，数量: " + availableEth + " ETH");
-            OkxResponse<Order> placeOrderResponse = tradeService.placeOrder(sellRequest);
-            
+//
+//            System.out.println("正在下市价卖出订单，数量: " + availableEth + " ETH");
             // 也可以尝试市价买入示例
-            /*
-            PlaceOrderRequest buyRequest = PlaceOrderRequest.builder()
-                    .instId("ETH-USDT")
-                    .tdMode("cash")
-                    .side("buy")
-                    .ordType("market")
-                    .sz("20")  // 使用20 USDT购买ETH
-                    .build();
-            */
-
+//            PlaceOrderRequest request = PlaceOrderRequest.builder()
+//                    .instId("ORDI-USDT")
+//                    .tdMode("cash")
+//                    .side("buy")
+//                    .ordType("market")
+//                    .sz("20")  // 使用20 USDT购买ETH
+//                    .build();
+            OkxResponse<Order> placeOrderResponse = tradeService.placeOrder(null);
             if (placeOrderResponse.isSuccessful()) {
                 if (placeOrderResponse.getData() != null) {
                     Order order = placeOrderResponse.getData();
                     System.out.println("下单成功，订单ID: " + order.getOrdId());
                     System.out.println("订单状态: " + order.getState());
-                    
+
                     // 等待一秒，让订单状态更新
                     Thread.sleep(1000);
-                    
+
                     // 查询订单详情
                     if (order.getOrdId() != null) {
                         OkxResponse<Order> orderResponse = tradeService.getOrderDetails("ETH-USDT", order.getOrdId(), null);

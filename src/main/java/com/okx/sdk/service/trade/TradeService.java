@@ -83,7 +83,7 @@ public interface TradeService {
      * @return 订单列表
      */
     OkxResponse<List<Order>> getPendingOrders(String instType, String instId, String ordType, String state,
-                                            String after, String before, Integer limit) throws IOException;
+                                              String after, String before, Integer limit) throws IOException;
 
     /**
      * 获取历史订单记录（近七天）
@@ -98,5 +98,5 @@ public interface TradeService {
      * @return 订单列表
      */
     OkxResponse<List<Order>> getOrderHistory(String instType, String instId, String ordType, String state,
-                                          String after, String before, Integer limit) throws IOException;
-} 
+                                             String after, String before, Integer limit) throws IOException;
+}

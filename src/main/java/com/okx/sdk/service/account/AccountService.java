@@ -1,9 +1,7 @@
 package com.okx.sdk.service.account;
 
 import com.okx.sdk.common.OkxResponse;
-import com.okx.sdk.model.account.Account;
-import com.okx.sdk.model.account.Bill;
-import com.okx.sdk.model.account.Position;
+import com.okx.sdk.model.account.*;
 
 import java.io.IOException;
 import java.util.List;
@@ -45,7 +43,7 @@ public interface AccountService {
      * @return 账单列表
      */
     OkxResponse<List<Bill>> getBills(String instType, String ccy, String mgnMode, String ctType,
-                                   String type, String subType, String after, String before, Integer limit) throws IOException;
+                                     String type, String subType, String after, String before, Integer limit) throws IOException;
 
     /**
      * 设置杠杆倍数
@@ -93,4 +91,21 @@ public interface AccountService {
      * @return 调整结果
      */
     OkxResponse<Void> adjustMargin(String instId, String posSide, String type, String amt, String ccy) throws IOException;
+
+    /**
+     * 资金划转
+     *
+     * @param transfer 划转请求参数
+     * @return 划转ID
+     */
+    OkxResponse<String> fundsTransfer(FundsTransfer transfer) throws IOException;
+
+    /**
+     * 获取资金划转状态
+     *
+     * @param transId 划转ID
+     * @param clientId 客户自定义ID
+     * @return 划转状态
+     */
+    OkxResponse<TransferState> getTransferState(String transId, String clientId,String type) throws IOException;
 } 
